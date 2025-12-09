@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bachelor Party 3D Card</title>
+
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -19,10 +21,14 @@
     .card-wrapper {
       perspective: 1200px;
       position: relative;
+      width: 100vw;
+      display: flex;
+      justify-content: center;
     }
 
     .card {
-      width: min(90vw, 420px);
+      width: 100vw;              /* FULL mobile width */
+      max-width: 450px;          /* Desktop control */
       aspect-ratio: 4 / 5;
       border-radius: 22px;
       background: radial-gradient(circle at top, #111827, #020617);
@@ -31,26 +37,27 @@
       position: relative;
       overflow: hidden;
       transform-style: preserve-3d;
-      transition: transform 0.3s cubic-bezier(0.25,0.8,0.25,1),
-                  box-shadow 0.3s ease;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
       cursor: pointer;
     }
 
-    .card:hover { box-shadow: 0 35px 80px rgba(250,204,21,0.4); }
+    .card:hover { 
+      box-shadow: 0 35px 80px rgba(250,204,21,0.4); 
+    }
 
     .card-inner-img {
       position: absolute;
-      inset: 4%;
-      width: 92%;
-      height: 92%;
+      inset: 0;           /* FULL SCREEN image */
+      width: 100%;
+      height: 100%;
       object-fit: cover;
-      border-radius: 18px;
+      border-radius: 22px;
       box-shadow: 0 15px 35px rgba(0,0,0,0.9);
       pointer-events: none;
       transition: transform 0.3s ease;
     }
 
-    /* sparks */
+    /* Sparks */
     .spark {
       position: absolute;
       width: 6px;
@@ -64,7 +71,7 @@
       100% { transform: scale(0.2) translateY(-40px); opacity: 0; }
     }
 
-    /* fireworks */
+    /* Fireworks */
     .firework {
       position: absolute;
       top: 10px;
@@ -83,8 +90,10 @@
       0% { transform: translate(0,0) scale(1); opacity: 1; }
       100% { transform: translate(var(--x), var(--y)) scale(0.2); opacity: 0; }
     }
+
   </style>
 </head>
+
 <body>
 
   <!-- 🔊 Background Music -->
@@ -101,7 +110,7 @@
   const img  = document.getElementById("cardImage");
   const bgMusic = document.getElementById("bgMusic");
 
-  bgMusic.volume = 0.15; // 🔊 Volume = 15%
+  bgMusic.volume = 0.15;
 
   // Mobile autoplay fix
   function enableMusic() {
@@ -116,6 +125,7 @@
     const maxDegree = 12;
     rotationY = x * maxDegree;
     rotationX = -y * maxDegree;
+
     card.style.transform = `perspective(1200px) rotateX(${rotationX}deg) rotateY(${rotationY}deg)`;
     img.style.transform   = `translateX(${rotationY*1.2}px) translateY(${rotationX*1.2}px) scale(1.05)`;
   }
@@ -135,10 +145,12 @@
 
   card.addEventListener("mousemove", e => handleMove(e.clientX, e.clientY));
   card.addEventListener("mouseleave", () => requestAnimationFrame(resetTransform));
+
   card.addEventListener("touchmove", e => {
     const t = e.touches[0];
     handleMove(t.clientX, t.clientY);
   });
+
   card.addEventListener("touchend", () => requestAnimationFrame(resetTransform));
 
   /* Sparks */
@@ -204,7 +216,7 @@
   }
 
   card.addEventListener("mouseenter", createFirework);
-  setInterval(createFirework, 4000);
+  setInterval(createFirework, 4500);
 </script>
 
 </body>
