@@ -101,7 +101,6 @@ bgMusic.volume = 0.2;
 playBtn.addEventListener("click", () => {
   bgMusic.play();
   playBtn.style.display = "none";
-  enableGyro(); // mobile gyro tilt
 });
 
 let rotationX = 0, rotationY = 0;
@@ -180,33 +179,6 @@ function fireworkTopLine() {
 window.addEventListener("load", () => {
   setInterval(fireworkTopLine, 2000);
 });
-
-/* Gyroscope tilt for mobile */
-function enableGyro() {
-  if (typeof DeviceOrientationEvent !== 'undefined' &&
-      typeof DeviceOrientationEvent.requestPermission === 'function') {
-    DeviceOrientationEvent.requestPermission().then(response => {
-      if (response === 'granted') {
-        window.addEventListener("deviceorientation", e => {
-          smoothGyro(e.beta, e.gamma);
-        });
-      }
-    }).catch(() => {});
-  } else if (typeof DeviceOrientationEvent !== 'undefined') {
-    window.addEventListener("deviceorientation", e => {
-      smoothGyro(e.beta, e.gamma);
-    });
-  }
-}
-
-function smoothGyro(beta, gamma) {
-  const maxTilt = 15;
-  let gx = Math.max(-maxTilt, Math.min(maxTilt, (beta || 0) / 5));
-  let gy = Math.max(-maxTilt, Math.min(maxTilt, (gamma || 0) / 5));
-
-  targetX = gx;
-  targetY = gy;
-}
 </script>
 </body>
 </html>
