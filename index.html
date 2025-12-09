@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bachelor Party 3D Card</title>
+  <title>Smooth 3D Glow Card with Fireworks</title>
   <style>
     body {
       min-height: 100vh;
@@ -59,29 +59,29 @@
       0% { transform: translate(0,0) scale(1); opacity: 1; }
       100% { transform: translate(var(--x), var(--y)) scale(0.2); opacity: 0; }
     }
-    /* Glassy Neon Pulse Button (small, lower) */
+    /* Glassy Neon Pulse Play Button */
     #playBtn {
       position: absolute;
-      bottom: 12%;
+      top: 65%;
       left: 50%;
-      transform: translateX(-50%);
-      padding: 6px 12px;
-      background: rgba(255,255,255,0.1);
+      transform: translate(-50%, -50%);
+      padding: 2% 12px;              /* smaller size */
+      background: rgba(255,255,255,0.1); /* transparent glass look */
       color: #facc15;
       font-weight: bold;
-      font-size: 12px;
-      border: 2px solid #facc15;
-      border-radius: 8px;
+      font-size: 14px;
+      border: 2px solid #facc15;      /* neon border */
+      border-radius: 10px;
       cursor: pointer;
-      backdrop-filter: blur(6px);
-      box-shadow: 0 0 12px rgba(250,204,21,0.8);
+      backdrop-filter: blur(6px);     /* glass blur */
+      box-shadow: 0 0 15px rgba(250,204,21,0.8);
       z-index: 999;
       animation: pulse 1.5s infinite;
     }
     @keyframes pulse {
-      0%   { box-shadow: 0 0 8px rgba(250,204,21,0.6), 0 0 16px rgba(250,204,21,0.4); }
-      50%  { box-shadow: 0 0 20px rgba(250,204,21,1), 0 0 30px rgba(250,204,21,0.8); }
-      100% { box-shadow: 0 0 8px rgba(250,204,21,0.6), 0 0 16px rgba(250,204,21,0.4); }
+      0%   { box-shadow: 0 0 10px rgba(250,204,21,0.6), 0 0 20px rgba(250,204,21,0.4); }
+      50%  { box-shadow: 0 0 25px rgba(250,204,21,1), 0 0 40px rgba(250,204,21,0.8); }
+      100% { box-shadow: 0 0 10px rgba(250,204,21,0.6), 0 0 20px rgba(250,204,21,0.4); }
     }
   </style>
 </head>
@@ -92,8 +92,8 @@
   <div class="card-wrapper">
     <div class="card" id="card3d">
       <img src="bachelor_card.png" class="card-inner-img" id="cardImage" />
-      <!-- Glassy Neon Pulse Button -->
-      <button id="playBtn">▶ Click</button>
+      <!-- Glassy Neon Pulse Play Button -->
+      <button id="playBtn"> Click</button>
     </div>
   </div>
 
@@ -105,29 +105,18 @@
 
   bgMusic.volume = 0.2;
 
-  // Enable gyroscope tilt
-  function enableGyro() {
-    if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-      // iOS Safari
-      DeviceOrientationEvent.requestPermission().then(response => {
-        if (response === 'granted') {
-          window.addEventListener("deviceorientation", e => {
-            updateGyro(e.beta, e.gamma);
-          });
-        }
-      }).catch(console.error);
-    } else {
-      // Android Chrome etc.
-      window.addEventListener("deviceorientation", e => {
-        updateGyro(e.beta, e.gamma);
-      });
-    }
-  }
+  // Button click to start music
+  playBtn.addEventListener("click", () => {
+    bgMusic.play();
+    playBtn.style.display = "none"; // hide button after click
+  });
 
-  function updateGyro(beta, gamma) {
-    const maxTilt = 30;
-    const rotationX = Math.max(-maxTilt, Math.min(maxTilt, beta / 3));
-    const rotationY = Math.max(-maxTilt, Math.min(maxTilt, gamma / 3));
+  let rotationX = 0, rotationY = 0;
+  let targetX = 0, targetY = 0;
+
+  function animate() {
+    rotationX += (targetX - rotationX) * 0.1;
+    rotationY += (targetY - rotationY) * 0.1;
 
     card.style.transform = `rotateX(${rotationX}deg) rotateY(${rotationY}deg) scale(1.1)`;
     img.style.transform  = `translateX(${rotationY*1.2}px) translateY(${rotationX*1.2}px) scale(1.05)`;
@@ -136,14 +125,26 @@
     const lightX = 50 + rotationY*2;
     const lightY = 30 + rotationX*2;
     card.style.background = `radial-gradient(circle at ${lightX}% ${lightY}%, rgba(250,204,21,0.9), #020617)`;
+
+    requestAnimationFrame(animate);
   }
 
-  // Button click to start music + gyro
-  playBtn.addEventListener("click", () => {
-    bgMusic.play();
-    playBtn.style.display = "none";
-    enableGyro();
-  });
+  function handleMove(clientX, clientY) {
+    const rect = card.getBoundingClientRect();
+    const x = (clientX - (rect.left + rect.width/2)) / (rect.width/2);
+    const y = (clientY - (rect.top + rect.height/2)) / (rect.height/2);
+    targetY = x * 35;
+    targetX = -y * 35;
+  }
+
+  card.addEventListener("mousemove", e => handleMove(e.clientX, e.clientY));
+  card.addEventListener("touchmove", e => {
+    e.preventDefault();
+    const t = e.touches[0];
+    handleMove(t.clientX, t.clientY);
+  }, { passive: false });
+
+  animate();
 
   /* Fireworks */
   function createFirework(xPos) {
