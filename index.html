@@ -19,7 +19,7 @@
     }
 
     .card-wrapper {
-      perspective: 1200px;
+      perspective: 1200px; /* 3D perspective */
       position: relative;
       width: 100vw;
       display: flex;
@@ -27,8 +27,8 @@
     }
 
     .card {
-      width: 100vw;              /* FULL mobile width */
-      max-width: 450px;          /* Desktop control */
+      width: 100vw;
+      max-width: 450px;
       aspect-ratio: 4 / 5;
       border-radius: 22px;
       background: radial-gradient(circle at top, #111827, #020617);
@@ -47,7 +47,7 @@
 
     .card-inner-img {
       position: absolute;
-      inset: 0;           /* FULL SCREEN image */
+      inset: 0;
       width: 100%;
       height: 100%;
       object-fit: cover;
@@ -75,8 +75,6 @@
     .firework {
       position: absolute;
       top: 10px;
-      left: 50%;
-      transform: translateX(-50%);
       pointer-events: none;
     }
     .particle {
@@ -90,7 +88,6 @@
       0% { transform: translate(0,0) scale(1); opacity: 1; }
       100% { transform: translate(var(--x), var(--y)) scale(0.2); opacity: 0; }
     }
-
   </style>
 </head>
 
@@ -122,16 +119,16 @@
   let rotationX = 0, rotationY = 0;
 
   function updateTransform(x, y) {
-    const maxDegree = 12;
+    const maxDegree = 25; // stronger tilt for visible 3D
     rotationY = x * maxDegree;
     rotationX = -y * maxDegree;
 
-    card.style.transform = `perspective(1200px) rotateX(${rotationX}deg) rotateY(${rotationY}deg)`;
+    card.style.transform = `rotateX(${rotationX}deg) rotateY(${rotationY}deg)`;
     img.style.transform   = `translateX(${rotationY*1.2}px) translateY(${rotationX*1.2}px) scale(1.05)`;
   }
 
   function resetTransform() {
-    card.style.transform = "perspective(1200px) rotateX(0deg) rotateY(0deg)";
+    card.style.transform = "rotateX(0deg) rotateY(0deg)";
     img.style.transform = "translateX(0) translateY(0) scale(1)";
   }
 
@@ -187,9 +184,10 @@
   }
 
   /* Fireworks */
-  function createFirework() {
+  function createFirework(xPos) {
     const firework = document.createElement("div");
     firework.className = "firework";
+    firework.style.left = xPos + "px";
     card.appendChild(firework);
 
     const particles = 14;
@@ -215,8 +213,19 @@
     setTimeout(() => firework.remove(), 1200);
   }
 
-  card.addEventListener("mouseenter", createFirework);
-  setInterval(createFirework, 4500);
+  function fireworkRow() {
+    const rect = card.getBoundingClientRect();
+    const step = rect.width / 6; // 6 fireworks across line
+    for (let i=1; i<=6; i++) {
+      createFirework(i*step);
+    }
+  }
+
+  // 🔥 Trigger row of fireworks continuously every 1.5 seconds
+  window.addEventListener("load", () => {
+    fireworkRow(); // first burst on load
+    setInterval(fireworkRow, 1500); // keep bursting
+  });
 </script>
 
 </body>
