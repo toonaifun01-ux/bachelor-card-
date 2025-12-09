@@ -1,195 +1,212 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vibha Bachelor Party Invitation</title>
-  <style>
-    body {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #020617;
-      overflow: hidden;
-      margin: 0;
-    }
-    .card-wrapper {
-      perspective: 600px;
-      width: 100vw;
-      display: flex;
-      justify-content: center;
-    }
-    .card {
-      width: 100vw;
-      max-width: 450px;
-      aspect-ratio: 4/5;
-      border-radius: 22px;
-      background: radial-gradient(circle at 50% 30%, rgba(250,204,21,0.9), #020617);
-      box-shadow: 0 0 80px rgba(250,204,21,0.8), 0 30px 70px rgba(0,0,0,0.9);
-      transform-style: preserve-3d;
-      position: relative;
-      overflow: hidden;
-    }
-    .card-inner-img {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 22px;
-      pointer-events: none;
-    }
-
-    /* Fireworks */
-    .firework {
-      position: absolute;
-      pointer-events: none;
-    }
-    .particle {
-      position: absolute;
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      animation: explode 1s ease-out forwards;
-    }
-    @keyframes explode {
-      0% { transform: translate(0,0) scale(1); opacity: 1; }
-      100% { transform: translate(var(--x), var(--y)) scale(0.2); opacity: 0; }
-    }
-
-    /* Glassy Neon Pulse Play Button */
-    #playBtn {
-      position: absolute;
-      top: 65%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      padding: 6px 12px;
-      background: rgba(255,255,255,0.1);
-      color: #facc15;
-      font-weight: bold;
-      font-size: 14px;
-      border: 2px solid #facc15;
-      border-radius: 10px;
-      cursor: pointer;
-      backdrop-filter: blur(6px);
-      box-shadow: 0 0 15px rgba(250,204,21,0.8);
-      z-index: 999;
-      animation: pulse 1.5s infinite;
-    }
-    @keyframes pulse {
-      0%   { box-shadow: 0 0 10px rgba(250,204,21,0.6), 0 0 20px rgba(250,204,21,0.4); }
-      50%  { box-shadow: 0 0 25px rgba(250,204,21,1), 0 0 40px rgba(250,204,21,0.8); }
-      100% { box-shadow: 0 0 10px rgba(250,204,21,0.6), 0 0 20px rgba(250,204,21,0.4); }
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bachelor Party Invitation</title>
+<style>
+  body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #020617;
+    margin: 0;
+    overflow: hidden;
+  }
+  .card-wrapper {
+    perspective: 600px;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+  }
+  .card {
+    width: 100vw;
+    max-width: 450px;
+    aspect-ratio: 4/5;
+    border-radius: 22px;
+    background: radial-gradient(circle at 50% 30%, rgba(250,204,21,0.9), #020617);
+    box-shadow: 0 0 80px rgba(250,204,21,0.8), 0 30px 70px rgba(0,0,0,0.9);
+    transform-style: preserve-3d;
+    position: relative;
+    overflow: hidden;
+  }
+  .card-inner-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 22px;
+    pointer-events: none;
+  }
+  .firework {
+    position: absolute;
+    pointer-events: none;
+  }
+  .particle {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    animation: explode 1s ease-out forwards;
+  }
+  @keyframes explode {
+    0% { transform: translate(0,0) scale(1); opacity: 1; }
+    100% { transform: translate(var(--x), var(--y)) scale(0.2); opacity: 0; }
+  }
+  #playBtn {
+    position: absolute;
+    top: 65%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 6px 12px;
+    background: rgba(255,255,255,0.1);
+    color: #facc15;
+    font-weight: bold;
+    font-size: 14px;
+    border: 2px solid #facc15;
+    border-radius: 10px;
+    cursor: pointer;
+    backdrop-filter: blur(6px);
+    box-shadow: 0 0 15px rgba(250,204,21,0.8);
+    z-index: 999;
+    animation: pulse 1.5s infinite;
+  }
+  @keyframes pulse {
+    0%   { box-shadow: 0 0 10px rgba(250,204,21,0.6), 0 0 20px rgba(250,204,21,0.4); }
+    50%  { box-shadow: 0 0 25px rgba(250,204,21,1), 0 0 40px rgba(250,204,21,0.8); }
+    100% { box-shadow: 0 0 10px rgba(250,204,21,0.6), 0 0 20px rgba(250,204,21,0.4); }
+  }
+</style>
 </head>
 <body>
-  <!-- 🔊 Background Music -->
-  <audio id="bgMusic" src="music.mp3" loop></audio>
+<audio id="bgMusic" src="music.mp3" loop></audio>
 
-  <div class="card-wrapper">
-    <div class="card" id="card3d">
-      <img src="bachelor_card.png" class="card-inner-img" id="cardImage" />
-      <button id="playBtn">Click</button>
-    </div>
+<div class="card-wrapper">
+  <div class="card" id="card3d">
+    <img src="bachelor_card.png" class="card-inner-img" id="cardImage" />
+    <button id="playBtn">Click</button>
   </div>
+</div>
 
 <script>
-  const card = document.getElementById("card3d");
-  const img  = document.getElementById("cardImage");
-  const bgMusic = document.getElementById("bgMusic");
-  const playBtn = document.getElementById("playBtn");
+const card = document.getElementById("card3d");
+const img  = document.getElementById("cardImage");
+const bgMusic = document.getElementById("bgMusic");
+const playBtn = document.getElementById("playBtn");
 
-  bgMusic.volume = 0.2;
+bgMusic.volume = 0.2;
 
-  playBtn.addEventListener("click", () => {
-    bgMusic.play();
-    playBtn.style.display = "none";
-  });
+playBtn.addEventListener("click", () => {
+  bgMusic.play();
+  playBtn.style.display = "none";
+  enableGyro(); // mobile gyro tilt
+});
 
-  let rotationX = 0, rotationY = 0;
-  let targetX = 0, targetY = 0;
+let rotationX = 0, rotationY = 0;
+let targetX = 0, targetY = 0;
 
-  function animate() {
-    // Smooth easing
-    rotationX += (targetX - rotationX) * 0.08;
-    rotationY += (targetY - rotationY) * 0.08;
+function animate() {
+  rotationX += (targetX - rotationX) * 0.08;
+  rotationY += (targetY - rotationY) * 0.08;
 
-    card.style.transform = `rotateX(${rotationX}deg) rotateY(${rotationY}deg) scale(1.05)`;
-    img.style.transform  = `translateX(${rotationY*1.2}px) translateY(${rotationX*1.2}px) scale(1.02)`;
+  card.style.transform = `rotateX(${rotationX}deg) rotateY(${rotationY}deg) scale(1.05)`;
+  img.style.transform  = `translateX(${rotationY*1.2}px) translateY(${rotationX*1.2}px) scale(1.02)`;
 
-    requestAnimationFrame(animate);
+  requestAnimationFrame(animate);
+}
+animate();
+
+function handleMove(clientX, clientY) {
+  const rect = card.getBoundingClientRect();
+  const x = (clientX - (rect.left + rect.width/2)) / (rect.width/2);
+  const y = (clientY - (rect.top + rect.height/2)) / (rect.height/2);
+
+  targetY = Math.max(-15, Math.min(15, x * 25));
+  targetX = Math.max(-15, Math.min(15, -y * 25));
+
+  const now = Date.now();
+  if (!window.lastFirework || now - window.lastFirework > 150) {
+    createFirework(clientX - rect.left, clientY - rect.top);
+    window.lastFirework = now;
   }
-  animate();
+}
 
-  function handleMove(clientX, clientY) {
-    const rect = card.getBoundingClientRect();
-    const x = (clientX - (rect.left + rect.width/2)) / (rect.width/2);
-    const y = (clientY - (rect.top + rect.height/2)) / (rect.height/2);
+card.addEventListener("mousemove", e => handleMove(e.clientX, e.clientY));
+card.addEventListener("touchmove", e => {
+  const t = e.touches[0];
+  handleMove(t.clientX, t.clientY);
+}, { passive: true });
 
-    // Clamp tilt
-    targetY = Math.max(-15, Math.min(15, x * 25));
-    targetX = Math.max(-15, Math.min(15, -y * 25));
+function createFirework(xPos, yPos) {
+  const firework = document.createElement("div");
+  firework.className = "firework";
+  firework.style.left = xPos + "px";
+  firework.style.top  = yPos + "px";
+  card.appendChild(firework);
 
-    // Fireworks throttled
-    const now = Date.now();
-    if (!window.lastFirework || now - window.lastFirework > 150) {
-      createFirework(clientX - rect.left, clientY - rect.top);
-      window.lastFirework = now;
-    }
-  }
+  const particles = 14;
+  const colors = ["#facc15","#ef4444","#3b82f6","#22c55e"];
 
-  card.addEventListener("mousemove", e => handleMove(e.clientX, e.clientY));
-  card.addEventListener("touchmove", e => {
-    const t = e.touches[0];
-    handleMove(t.clientX, t.clientY);
-  }, { passive: true });
+  for (let i=0; i<particles; i++) {
+    const p = document.createElement("span");
+    p.className = "particle";
 
-  /* Fireworks */
-  function createFirework(xPos, yPos) {
-    const firework = document.createElement("div");
-    firework.className = "firework";
-    firework.style.left = xPos + "px";
-    firework.style.top  = yPos + "px";
-    card.appendChild(firework);
+    const angle = (i/particles)*2*Math.PI;
+    const dist = Math.random()*100 + 60;
+    const x = Math.cos(angle)*dist;
+    const y = Math.sin(angle)*dist;
 
-    const particles = 14;
-    const colors = ["#facc15","#ef4444","#3b82f6","#22c55e"];
+    p.style.setProperty("--x", `${x}px`);
+    p.style.setProperty("--y", `${y}px`);
+    p.style.background = colors[Math.floor(Math.random()*colors.length)];
 
-    for (let i=0; i<particles; i++) {
-      const p = document.createElement("span");
-      p.className = "particle";
-
-      const angle = (i/particles)*2*Math.PI;
-      const dist = Math.random()*100 + 60;
-      const x = Math.cos(angle)*dist;
-      const y = Math.sin(angle)*dist;
-
-      p.style.setProperty("--x", `${x}px`);
-      p.style.setProperty("--y", `${y}px`);
-      p.style.background = colors[Math.floor(Math.random()*colors.length)];
-
-      firework.appendChild(p);
-      p.addEventListener("animationend", ()=>p.remove());
-    }
-
-    setTimeout(() => firework.remove(), 1200);
+    firework.appendChild(p);
+    p.addEventListener("animationend", ()=>p.remove());
   }
 
-  /* 🔥 Top line fireworks row */
-  function fireworkTopLine() {
-    const rect = card.getBoundingClientRect();
-    const step = rect.width / 6; // 6 bursts across top
-    for (let i=1; i<=6; i++) {
-      createFirework(i*step, 0); // y=0 → top edge
-    }
-  }
+  setTimeout(() => firework.remove(), 1200);
+}
 
-  // Run top line fireworks continuously
-  window.addEventListener("load", () => {
-    setInterval(fireworkTopLine, 2000); // every 2s
-  });
+/* Top line fireworks */
+function fireworkTopLine() {
+  const rect = card.getBoundingClientRect();
+  const step = rect.width / 6;
+  for (let i=1; i<=6; i++) {
+    createFirework(i*step, 0);
+  }
+}
+window.addEventListener("load", () => {
+  setInterval(fireworkTopLine, 2000);
+});
+
+/* Gyroscope tilt for mobile */
+function enableGyro() {
+  if (typeof DeviceOrientationEvent !== 'undefined' &&
+      typeof DeviceOrientationEvent.requestPermission === 'function') {
+    DeviceOrientationEvent.requestPermission().then(response => {
+      if (response === 'granted') {
+        window.addEventListener("deviceorientation", e => {
+          smoothGyro(e.beta, e.gamma);
+        });
+      }
+    }).catch(() => {});
+  } else if (typeof DeviceOrientationEvent !== 'undefined') {
+    window.addEventListener("deviceorientation", e => {
+      smoothGyro(e.beta, e.gamma);
+    });
+  }
+}
+
+function smoothGyro(beta, gamma) {
+  const maxTilt = 15;
+  let gx = Math.max(-maxTilt, Math.min(maxTilt, (beta || 0) / 5));
+  let gy = Math.max(-maxTilt, Math.min(maxTilt, (gamma || 0) / 5));
+
+  targetX = gx;
+  targetY = gy;
+}
 </script>
 </body>
 </html>
