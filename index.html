@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bachelor Party Extreme 3D Card</title>
-
+  <title>Smooth 3D Glow Card with Fireworks</title>
   <style>
     body {
       min-height: 100vh;
@@ -12,34 +11,27 @@
       align-items: center;
       justify-content: center;
       background: #020617;
-      font-family: system-ui, sans-serif;
       overflow: hidden;
     }
-
     .card-wrapper {
-      perspective: 400px; /* smaller perspective = stronger depth */
-      position: relative;
+      perspective: 600px;
       width: 100vw;
       display: flex;
       justify-content: center;
     }
-
     .card {
       width: 100vw;
       max-width: 450px;
-      aspect-ratio: 4 / 5;
+      aspect-ratio: 4/5;
       border-radius: 22px;
       background: radial-gradient(circle at 50% 30%, rgba(250,204,21,0.9), #020617);
-      border: 1px solid rgba(250, 204, 21, 0.6);
-      box-shadow: 0 0 100px rgba(250,204,21,0.9), 0 40px 90px rgba(0,0,0,0.9);
+      box-shadow: 0 0 80px rgba(250,204,21,0.8), 0 30px 70px rgba(0,0,0,0.9);
+      transform-style: preserve-3d;
+      will-change: transform, box-shadow, background;
+      touch-action: none;
       position: relative;
       overflow: hidden;
-      transform-style: preserve-3d;
-      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
-      cursor: pointer;
-      touch-action: none;
     }
-
     .card-inner-img {
       position: absolute;
       inset: 0;
@@ -48,23 +40,8 @@
       object-fit: cover;
       border-radius: 22px;
       pointer-events: none;
-      transition: transform 0.2s ease;
+      will-change: transform;
     }
-
-    /* Sparks */
-    .spark {
-      position: absolute;
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      pointer-events: none;
-      animation: spark-anim 0.8s ease-out forwards;
-    }
-    @keyframes spark-anim {
-      0% { transform: scale(1) translateY(0); opacity: 1; }
-      100% { transform: scale(0.2) translateY(-40px); opacity: 0; }
-    }
-
     /* Fireworks */
     .firework {
       position: absolute;
@@ -82,17 +59,41 @@
       0% { transform: translate(0,0) scale(1); opacity: 1; }
       100% { transform: translate(var(--x), var(--y)) scale(0.2); opacity: 0; }
     }
+    /* Glassy Neon Pulse Play Button */
+    #playBtn {
+      position: absolute;
+      top: 65%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 2% 12px;              /* smaller size */
+      background: rgba(255,255,255,0.1); /* transparent glass look */
+      color: #facc15;
+      font-weight: bold;
+      font-size: 14px;
+      border: 2px solid #facc15;      /* neon border */
+      border-radius: 10px;
+      cursor: pointer;
+      backdrop-filter: blur(6px);     /* glass blur */
+      box-shadow: 0 0 15px rgba(250,204,21,0.8);
+      z-index: 999;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0%   { box-shadow: 0 0 10px rgba(250,204,21,0.6), 0 0 20px rgba(250,204,21,0.4); }
+      50%  { box-shadow: 0 0 25px rgba(250,204,21,1), 0 0 40px rgba(250,204,21,0.8); }
+      100% { box-shadow: 0 0 10px rgba(250,204,21,0.6), 0 0 20px rgba(250,204,21,0.4); }
+    }
   </style>
 </head>
-
 <body>
-
   <!-- 🔊 Background Music -->
-  <audio id="bgMusic" src="music.mp3" autoplay loop></audio>
+  <audio id="bgMusic" src="music.mp3" loop></audio>
 
   <div class="card-wrapper">
     <div class="card" id="card3d">
       <img src="bachelor_card.png" class="card-inner-img" id="cardImage" />
+      <!-- Glassy Neon Pulse Play Button -->
+      <button id="playBtn"> Click</button>
     </div>
   </div>
 
@@ -100,75 +101,50 @@
   const card = document.getElementById("card3d");
   const img  = document.getElementById("cardImage");
   const bgMusic = document.getElementById("bgMusic");
+  const playBtn = document.getElementById("playBtn");
 
-  bgMusic.volume = 0.15;
-  document.addEventListener("click", () => bgMusic.play());
+  bgMusic.volume = 0.2;
+
+  // Button click to start music
+  playBtn.addEventListener("click", () => {
+    bgMusic.play();
+    playBtn.style.display = "none"; // hide button after click
+  });
 
   let rotationX = 0, rotationY = 0;
+  let targetX = 0, targetY = 0;
 
-  function updateTransform(x, y) {
-    const maxDegree = 70; // extreme tilt
-    rotationY = x * maxDegree;
-    rotationX = -y * maxDegree;
+  function animate() {
+    rotationX += (targetX - rotationX) * 0.1;
+    rotationY += (targetY - rotationY) * 0.1;
 
-    card.style.transform = `rotateX(${rotationX}deg) rotateY(${rotationY}deg) scale(1.2)`;
-    img.style.transform  = `translateX(${rotationY*2}px) translateY(${rotationX*2}px) scale(1.25)`;
-    card.style.boxShadow = `${rotationY*4}px ${rotationX*4}px 100px rgba(250,204,21,0.9), 0 40px 90px rgba(0,0,0,0.9)`;
+    card.style.transform = `rotateX(${rotationX}deg) rotateY(${rotationY}deg) scale(1.1)`;
+    img.style.transform  = `translateX(${rotationY*1.2}px) translateY(${rotationX*1.2}px) scale(1.05)`;
+    card.style.boxShadow = `${rotationY*2}px ${rotationX*2}px 70px rgba(250,204,21,0.8), 0 30px 70px rgba(0,0,0,0.9)`;
 
-    const lightX = 50 + rotationY*4;
-    const lightY = 30 + rotationX*4;
-    const glowStrength = 0.8 + (Math.abs(rotationX)+Math.abs(rotationY))/30;
-    card.style.background = `radial-gradient(circle at ${lightX}% ${lightY}%, rgba(250,204,21,${glowStrength}), #020617)`;
-  }
+    const lightX = 50 + rotationY*2;
+    const lightY = 30 + rotationX*2;
+    card.style.background = `radial-gradient(circle at ${lightX}% ${lightY}%, rgba(250,204,21,0.9), #020617)`;
 
-  function resetTransform() {
-    card.style.transform = "rotateX(0deg) rotateY(0deg) scale(1)";
-    img.style.transform = "translateX(0) translateY(0) scale(1)";
-    card.style.boxShadow = "0 0 100px rgba(250,204,21,0.9), 0 40px 90px rgba(0,0,0,0.9)";
-    card.style.background = "radial-gradient(circle at 50% 30%, rgba(250,204,21,0.9), #020617)";
+    requestAnimationFrame(animate);
   }
 
   function handleMove(clientX, clientY) {
     const rect = card.getBoundingClientRect();
     const x = (clientX - (rect.left + rect.width/2)) / (rect.width/2);
-    const y = (clientY - (rect.top  + rect.height/2)) / (rect.height/2);
-    requestAnimationFrame(() => updateTransform(x,y));
-    createSpark(clientX, clientY, rect);
+    const y = (clientY - (rect.top + rect.height/2)) / (rect.height/2);
+    targetY = x * 35;
+    targetX = -y * 35;
   }
 
   card.addEventListener("mousemove", e => handleMove(e.clientX, e.clientY));
-  card.addEventListener("mouseleave", () => requestAnimationFrame(resetTransform));
-
   card.addEventListener("touchmove", e => {
     e.preventDefault();
     const t = e.touches[0];
     handleMove(t.clientX, t.clientY);
   }, { passive: false });
 
-  card.addEventListener("touchend", () => requestAnimationFrame(resetTransform));
-
-  /* Sparks */
-  function createSpark(clientX, clientY, rect){
-    const spark = document.createElement("span");
-    spark.className = "spark";
-
-    const x = clientX - rect.left;
-    const y = clientY - rect.top;
-
-    spark.style.left = x + "px";
-    spark.style.top  = y + "px";
-
-    const size = Math.random()*6 + 4;
-    spark.style.width = size + "px";
-    spark.style.height = size + "px";
-
-    const colors = ["#facc15","#ef4444","#3b82f6","#22c55e"];
-    spark.style.background =
-      `radial-gradient(circle, ${colors[Math.floor(Math.random()*colors.length)]}, transparent)`;
-
-    card.appendChild(spark);
-    spark.addEventListener("animationend", () => spark.remove());
-  }
+  animate();
 
   /* Fireworks */
   function createFirework(xPos) {
@@ -213,6 +189,5 @@
     setInterval(fireworkRow, 1500);
   });
 </script>
-
 </body>
 </html>
