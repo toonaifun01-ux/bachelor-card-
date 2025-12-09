@@ -112,16 +112,12 @@
   let targetX = 0, targetY = 0;
 
   function animate() {
-    rotationX += (targetX - rotationX) * 0.1;
-    rotationY += (targetY - rotationY) * 0.1;
+    // Smooth easing
+    rotationX += (targetX - rotationX) * 0.08;
+    rotationY += (targetY - rotationY) * 0.08;
 
     card.style.transform = `rotateX(${rotationX}deg) rotateY(${rotationY}deg) scale(1.05)`;
     img.style.transform  = `translateX(${rotationY*1.2}px) translateY(${rotationX*1.2}px) scale(1.02)`;
-    card.style.boxShadow = `${rotationY*2}px ${rotationX*2}px 70px rgba(250,204,21,0.8), 0 30px 70px rgba(0,0,0,0.9)`;
-
-    const lightX = 50 + rotationY*2;
-    const lightY = 30 + rotationX*2;
-    card.style.background = `radial-gradient(circle at ${lightX}% ${lightY}%, rgba(250,204,21,0.9), #020617)`;
 
     requestAnimationFrame(animate);
   }
@@ -131,11 +127,17 @@
     const rect = card.getBoundingClientRect();
     const x = (clientX - (rect.left + rect.width/2)) / (rect.width/2);
     const y = (clientY - (rect.top + rect.height/2)) / (rect.height/2);
-    targetY = x * 35;
-    targetX = -y * 35;
 
-    // Fireworks at mouse/touch position
-    createFirework(clientX - rect.left, clientY - rect.top);
+    // Clamp tilt
+    targetY = Math.max(-15, Math.min(15, x * 25));
+    targetX = Math.max(-15, Math.min(15, -y * 25));
+
+    // Fireworks throttled
+    const now = Date.now();
+    if (!window.lastFirework || now - window.lastFirework > 150) {
+      createFirework(clientX - rect.left, clientY - rect.top);
+      window.lastFirework = now;
+    }
   }
 
   card.addEventListener("mousemove", e => handleMove(e.clientX, e.clientY));
