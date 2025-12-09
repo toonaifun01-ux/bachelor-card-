@@ -3,11 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bachelor Party 3D Card</title>
+  <title>Bachelor Party Extreme 3D Card</title>
 
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
       min-height: 100vh;
       display: flex;
@@ -19,7 +17,7 @@
     }
 
     .card-wrapper {
-      perspective: 800px; /* reduced for stronger depth on mobile */
+      perspective: 400px; /* smaller perspective = stronger depth */
       position: relative;
       width: 100vw;
       display: flex;
@@ -31,14 +29,15 @@
       max-width: 450px;
       aspect-ratio: 4 / 5;
       border-radius: 22px;
-      background: radial-gradient(circle at top, #111827, #020617);
-      border: 1px solid rgba(250, 204, 21, 0.4);
-      box-shadow: 0 25px 60px rgba(0,0,0,0.8);
+      background: radial-gradient(circle at 50% 30%, rgba(250,204,21,0.9), #020617);
+      border: 1px solid rgba(250, 204, 21, 0.6);
+      box-shadow: 0 0 100px rgba(250,204,21,0.9), 0 40px 90px rgba(0,0,0,0.9);
       position: relative;
       overflow: hidden;
       transform-style: preserve-3d;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
       cursor: pointer;
+      touch-action: none;
     }
 
     .card-inner-img {
@@ -49,7 +48,7 @@
       object-fit: cover;
       border-radius: 22px;
       pointer-events: none;
-      transition: transform 0.3s ease;
+      transition: transform 0.2s ease;
     }
 
     /* Sparks */
@@ -103,30 +102,30 @@
   const bgMusic = document.getElementById("bgMusic");
 
   bgMusic.volume = 0.15;
-
-  // Mobile autoplay fix
-  function enableMusic() {
-    bgMusic.play();
-    document.removeEventListener("click", enableMusic);
-  }
-  document.addEventListener("click", enableMusic);
+  document.addEventListener("click", () => bgMusic.play());
 
   let rotationX = 0, rotationY = 0;
 
   function updateTransform(x, y) {
-    const maxDegree = 40; // stronger tilt for mobile
+    const maxDegree = 70; // extreme tilt
     rotationY = x * maxDegree;
     rotationX = -y * maxDegree;
 
-    card.style.transform = `rotateX(${rotationX}deg) rotateY(${rotationY}deg) scale(1.08)`;
-    img.style.transform   = `translateX(${rotationY*1.5}px) translateY(${rotationX*1.5}px) scale(1.1)`;
-    card.style.boxShadow  = `${rotationY*2}px ${rotationX*2}px 40px rgba(250,204,21,0.4)`;
+    card.style.transform = `rotateX(${rotationX}deg) rotateY(${rotationY}deg) scale(1.2)`;
+    img.style.transform  = `translateX(${rotationY*2}px) translateY(${rotationX*2}px) scale(1.25)`;
+    card.style.boxShadow = `${rotationY*4}px ${rotationX*4}px 100px rgba(250,204,21,0.9), 0 40px 90px rgba(0,0,0,0.9)`;
+
+    const lightX = 50 + rotationY*4;
+    const lightY = 30 + rotationX*4;
+    const glowStrength = 0.8 + (Math.abs(rotationX)+Math.abs(rotationY))/30;
+    card.style.background = `radial-gradient(circle at ${lightX}% ${lightY}%, rgba(250,204,21,${glowStrength}), #020617)`;
   }
 
   function resetTransform() {
     card.style.transform = "rotateX(0deg) rotateY(0deg) scale(1)";
     img.style.transform = "translateX(0) translateY(0) scale(1)";
-    card.style.boxShadow = "0 25px 60px rgba(0,0,0,0.8)";
+    card.style.boxShadow = "0 0 100px rgba(250,204,21,0.9), 0 40px 90px rgba(0,0,0,0.9)";
+    card.style.background = "radial-gradient(circle at 50% 30%, rgba(250,204,21,0.9), #020617)";
   }
 
   function handleMove(clientX, clientY) {
@@ -141,19 +140,15 @@
   card.addEventListener("mouseleave", () => requestAnimationFrame(resetTransform));
 
   card.addEventListener("touchmove", e => {
+    e.preventDefault();
     const t = e.touches[0];
     handleMove(t.clientX, t.clientY);
-  });
+  }, { passive: false });
 
   card.addEventListener("touchend", () => requestAnimationFrame(resetTransform));
 
   /* Sparks */
-  let sparkCount = 0;
-  const MAX_SPARKS = 40;
-
   function createSpark(clientX, clientY, rect){
-    if (sparkCount > MAX_SPARKS) return;
-
     const spark = document.createElement("span");
     spark.className = "spark";
 
@@ -172,12 +167,7 @@
       `radial-gradient(circle, ${colors[Math.floor(Math.random()*colors.length)]}, transparent)`;
 
     card.appendChild(spark);
-    sparkCount++;
-
-    spark.addEventListener("animationend", () => {
-      spark.remove();
-      sparkCount--;
-    });
+    spark.addEventListener("animationend", () => spark.remove());
   }
 
   /* Fireworks */
@@ -195,7 +185,7 @@
       p.className = "particle";
 
       const angle = (i/particles)*2*Math.PI;
-      const dist = Math.random()*80 + 40;
+      const dist = Math.random()*100 + 60;
       const x = Math.cos(angle)*dist;
       const y = Math.sin(angle)*dist;
 
@@ -212,16 +202,15 @@
 
   function fireworkRow() {
     const rect = card.getBoundingClientRect();
-    const step = rect.width / 6; // 6 fireworks across line
+    const step = rect.width / 6;
     for (let i=1; i<=6; i++) {
       createFirework(i*step);
     }
   }
 
-  // 🔥 Continuous fireworks every 1.5 seconds
   window.addEventListener("load", () => {
-    fireworkRow(); // first burst on load
-    setInterval(fireworkRow, 1500); // keep bursting
+    fireworkRow();
+    setInterval(fireworkRow, 1500);
   });
 </script>
 
