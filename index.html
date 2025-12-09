@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>vibha bachelor party invitation</title>
+  <title>Vibha Bachelor Party Invitation</title>
   <style>
     body {
       min-height: 100vh;
@@ -12,6 +12,7 @@
       justify-content: center;
       background: #020617;
       overflow: hidden;
+      margin: 0;
     }
     .card-wrapper {
       perspective: 600px;
@@ -27,8 +28,6 @@
       background: radial-gradient(circle at 50% 30%, rgba(250,204,21,0.9), #020617);
       box-shadow: 0 0 80px rgba(250,204,21,0.8), 0 30px 70px rgba(0,0,0,0.9);
       transform-style: preserve-3d;
-      will-change: transform, box-shadow, background;
-      touch-action: none;
       position: relative;
       overflow: hidden;
     }
@@ -40,12 +39,11 @@
       object-fit: cover;
       border-radius: 22px;
       pointer-events: none;
-      will-change: transform;
     }
+
     /* Fireworks */
     .firework {
       position: absolute;
-      top: 10px;
       pointer-events: none;
     }
     .particle {
@@ -59,21 +57,22 @@
       0% { transform: translate(0,0) scale(1); opacity: 1; }
       100% { transform: translate(var(--x), var(--y)) scale(0.2); opacity: 0; }
     }
+
     /* Glassy Neon Pulse Play Button */
     #playBtn {
       position: absolute;
       top: 65%;
       left: 50%;
       transform: translate(-50%, -50%);
-      padding: 2% 12px;              /* smaller size */
-      background: rgba(255,255,255,0.1); /* transparent glass look */
+      padding: 6px 12px;
+      background: rgba(255,255,255,0.1);
       color: #facc15;
       font-weight: bold;
       font-size: 14px;
-      border: 2px solid #facc15;      /* neon border */
+      border: 2px solid #facc15;
       border-radius: 10px;
       cursor: pointer;
-      backdrop-filter: blur(6px);     /* glass blur */
+      backdrop-filter: blur(6px);
       box-shadow: 0 0 15px rgba(250,204,21,0.8);
       z-index: 999;
       animation: pulse 1.5s infinite;
@@ -92,8 +91,7 @@
   <div class="card-wrapper">
     <div class="card" id="card3d">
       <img src="bachelor_card.png" class="card-inner-img" id="cardImage" />
-      <!-- Glassy Neon Pulse Play Button -->
-      <button id="playBtn"> Click</button>
+      <button id="playBtn">Click</button>
     </div>
   </div>
 
@@ -105,10 +103,9 @@
 
   bgMusic.volume = 0.2;
 
-  // Button click to start music
   playBtn.addEventListener("click", () => {
     bgMusic.play();
-    playBtn.style.display = "none"; // hide button after click
+    playBtn.style.display = "none";
   });
 
   let rotationX = 0, rotationY = 0;
@@ -118,8 +115,8 @@
     rotationX += (targetX - rotationX) * 0.1;
     rotationY += (targetY - rotationY) * 0.1;
 
-    card.style.transform = `rotateX(${rotationX}deg) rotateY(${rotationY}deg) scale(1.1)`;
-    img.style.transform  = `translateX(${rotationY*1.2}px) translateY(${rotationX*1.2}px) scale(1.05)`;
+    card.style.transform = `rotateX(${rotationX}deg) rotateY(${rotationY}deg) scale(1.05)`;
+    img.style.transform  = `translateX(${rotationY*1.2}px) translateY(${rotationX*1.2}px) scale(1.02)`;
     card.style.boxShadow = `${rotationY*2}px ${rotationX*2}px 70px rgba(250,204,21,0.8), 0 30px 70px rgba(0,0,0,0.9)`;
 
     const lightX = 50 + rotationY*2;
@@ -128,6 +125,7 @@
 
     requestAnimationFrame(animate);
   }
+  animate();
 
   function handleMove(clientX, clientY) {
     const rect = card.getBoundingClientRect();
@@ -135,22 +133,23 @@
     const y = (clientY - (rect.top + rect.height/2)) / (rect.height/2);
     targetY = x * 35;
     targetX = -y * 35;
+
+    // Fireworks at mouse/touch position
+    createFirework(clientX - rect.left, clientY - rect.top);
   }
 
   card.addEventListener("mousemove", e => handleMove(e.clientX, e.clientY));
   card.addEventListener("touchmove", e => {
-    e.preventDefault();
     const t = e.touches[0];
     handleMove(t.clientX, t.clientY);
-  }, { passive: false });
-
-  animate();
+  }, { passive: true });
 
   /* Fireworks */
-  function createFirework(xPos) {
+  function createFirework(xPos, yPos) {
     const firework = document.createElement("div");
     firework.className = "firework";
     firework.style.left = xPos + "px";
+    firework.style.top  = yPos + "px";
     card.appendChild(firework);
 
     const particles = 14;
@@ -176,17 +175,18 @@
     setTimeout(() => firework.remove(), 1200);
   }
 
-  function fireworkRow() {
+  /* 🔥 Top line fireworks row */
+  function fireworkTopLine() {
     const rect = card.getBoundingClientRect();
-    const step = rect.width / 6;
+    const step = rect.width / 6; // 6 bursts across top
     for (let i=1; i<=6; i++) {
-      createFirework(i*step);
+      createFirework(i*step, 0); // y=0 → top edge
     }
   }
 
+  // Run top line fireworks continuously
   window.addEventListener("load", () => {
-    fireworkRow();
-    setInterval(fireworkRow, 1500);
+    setInterval(fireworkTopLine, 2000); // every 2s
   });
 </script>
 </body>
